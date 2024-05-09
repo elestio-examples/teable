@@ -13,7 +13,7 @@ Deploy Teable server with CI/CD on Elestio
 You can open Teable ADMIN UI here:
 
     URL: https://[CI_CD_DOMAIN]
-    email: root
+    email: [ADMIN_EMAIL]
     password: [ADMIN_PASSWORD]
 
 You can open pgAdmin here:
