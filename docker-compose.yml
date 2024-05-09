@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  teable:
+    image: ghcr.io/teableio/teable:${SOFTWARE_VERSION_TAG}
+    restart: always
+    ports:
+      - "172.17.0.1:11302:3000"
+    volumes:
+      - ./storage/teable-data:/app/.assets:rw
+    env_file:
+      - ./.env
+    environment:
+      - TZ=${TIMEZONE}
+      - NEXT_ENV_IMAGES_ALL_REMOTE="true"
+    depends_on:
+      - teable-db-migrate
+
+  teable-db:
+    image: elestio/postgres:15
+    restart: always
+    ports:
+      - "172.17.0.1:42345:5432"
+    volumes:
+      - ./storage/teable-db:/var/lib/postgresql/data:rw
+    environment:
+      - TZ=${TIMEZONE}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  teable-db-migrate:
+    image: ghcr.io/teableio/teable-db-migrate:latest
+    environment:
+      - TZ=${TIMEZONE}
+      - PRISMA_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    depends_on:
+      - teable-db
+
+  pgadmin:
+    image: elestio/pgadmin:latest
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${ADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${ADMIN_PASSWORD}
+      PGADMIN_LISTEN_PORT: 8080
+    ports:
+      - "172.17.0.1:35510:8080"
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
