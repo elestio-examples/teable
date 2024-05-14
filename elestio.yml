@@ -60,6 +60,8 @@ environments:
     value: "[DOMAIN]@vm.elestio.app"
   - key: "BACKEND_MAIL_SENDER_NAME"
     value: "Teable"
+  - key: "TIMEZONE"
+    value: "UTC"
 
 config:
   runTime: "dockerCompose"
